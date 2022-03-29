@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using System;
 
 namespace IdentityServer
 {
@@ -31,11 +33,24 @@ namespace IdentityServer
             {
                 options.DefaultScheme = "Cookies";
                 options.DefaultAuthenticateScheme = "Cookies";
+            }).AddJwtBearer(jwt =>
+            {
+                jwt.Authority = Configuration.GetValue<string>("identityServerUrl");
+                jwt.RequireHttpsMetadata = false;
+                jwt.Audience = "app_api"; 
+                jwt.TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = "name",
+                    RoleClaimType = "role",
+                };
             });
-            services.AddLocalApiAuthentication();
+
 
             // uncomment, if you want to add an MVC-based UI
             services.AddControllersWithViews();
+
+            //enable token validation for local APIs,
+            services.AddLocalApiAuthentication();
 
             services.AddDbContext<ApplicationDbContext>(opts =>
                opts.UseSqlServer(connectionString)
@@ -48,13 +63,21 @@ namespace IdentityServer
 
             var builder = services.AddIdentityServer(options =>
             {
-                // see https://identityserver4.readthedocs.io/en/latest/topics/resources.html
-                options.EmitStaticAudienceClaim = true;
+                options.Caching.ClientStoreExpiration = TimeSpan.FromDays(30);
+                options.Caching.ResourceStoreExpiration = TimeSpan.FromDays(30);
+                options.Caching.CorsExpiration = TimeSpan.FromDays(30);
+
+                options.Events.RaiseErrorEvents = true;
+                options.Events.RaiseInformationEvents = true;
+                options.Events.RaiseFailureEvents = true;
+                options.Events.RaiseSuccessEvents = true;
             })
                 .AddAspNetIdentity<ApplicationUser>()
                 .AddInMemoryIdentityResources(Config.IdentityResources)
+                .AddInMemoryApiResources(Config.ApiResources)
                 .AddInMemoryApiScopes(Config.ApiScopes)
-                .AddInMemoryClients(Config.Clients);
+                .AddInMemoryClients(Config.Clients)
+                .AddInMemoryCaching();
 
             // not recommended for production - you need to store your key material somewhere secure
             builder.AddDeveloperSigningCredential();
@@ -89,6 +112,7 @@ namespace IdentityServer
 
             // uncomment, if you want to add MVC
             app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
