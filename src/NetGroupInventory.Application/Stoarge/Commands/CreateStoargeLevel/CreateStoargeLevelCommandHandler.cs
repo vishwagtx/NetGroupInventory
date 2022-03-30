@@ -5,18 +5,18 @@ using NetGroupInventory.Domain.Stoarge;
 
 namespace NetGroupInventory.Application.Stoarge.Commands.CreateStoargeLevel
 {
-    public class CreateStoargeLevelCommandHandler : BaseRequestHandler, IRequestHandler<CreateStoargeLevelCommand, ResponseDto>
+    public class CreateStoargeLevelCommandHandler : BaseRequestHandler, IRequestHandler<CreateStoargeLevelCommand, ResponseDto<int>>
     {
-        public CreateStoargeLevelCommandHandler(IUnitOfWork uow) : base(uow)
+        public CreateStoargeLevelCommandHandler(IUnitOfWork uow, IUserIdentity identity) : base(uow, identity)
         {
         }
 
-        public async Task<ResponseDto> Handle(CreateStoargeLevelCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseDto<int>> Handle(CreateStoargeLevelCommand request, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             if (uow.StoargeLevels.HasLevel(request.Level))
-                return new ResponseDto
+                return new ResponseDto<int>
                 {
                     Succeed = false,
                     Errors = new List<string> { "Storage level is already existing in the database" }
@@ -26,7 +26,7 @@ namespace NetGroupInventory.Application.Stoarge.Commands.CreateStoargeLevel
             {
                 Level = request.Level,
                 Description = request.Description,
-                CreatedBy = "test",
+                CreatedBy = identity.Identifier,
                 CreatedDateTime = DateTimeOffset.Now,
             };
 
@@ -34,9 +34,10 @@ namespace NetGroupInventory.Application.Stoarge.Commands.CreateStoargeLevel
 
             await uow.SaveAsync();
 
-            return new ResponseDto
+            return new ResponseDto<int>
             {
-                Succeed = true
+                Succeed = true,
+                Id = level.Id
             };
         }
     }

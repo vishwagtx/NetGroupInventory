@@ -2,7 +2,7 @@
 
 namespace NetGroupInventory.Application.Stoarge.Commands.Dtos
 {
-    public class StoargeLevelDto
+    public abstract class BaseStoargeLevelDto
     {
         [Required]
         [StringLength(250)]
