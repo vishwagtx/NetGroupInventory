@@ -14,6 +14,6 @@ namespace NetGroupInventory.Domain.Stoarge
         public DateTimeOffset? ModifiedDateTime { get; set; }
 
 
-        public virtual ICollection<Inventory> IneventoryItems { get; set; }
+        public virtual ICollection<Inventory> InventoryItems { get; set; }
     }
 }

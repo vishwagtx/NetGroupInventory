@@ -9,7 +9,8 @@ namespace NetGroupInventory.Domain.Stoarge
         public int StorageLevelId { get; set; }
         public int ItemId { get; set; }
         public string SerialNumber { get; set; } 
-        public string Note { get; set; } 
+        public string Note { get; set; }
+        public int? Quantity { get; set; }
 
         public string CreatedBy { get; set; } 
         public DateTimeOffset CreatedDateTime { get; set; } 
