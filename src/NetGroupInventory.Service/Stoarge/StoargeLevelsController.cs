@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NetGroupInventory.Application.Stoarge.Commands.CreateStoargeLevel;
 
@@ -7,6 +7,7 @@ namespace NetGroupInventory.Service.Stoarge
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class StoargeLevelsController : ControllerBase
     {
         readonly IMediator bus;

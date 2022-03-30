@@ -15,6 +15,13 @@ namespace NetGroupInventory.Application.Items.Commands.CreateItem
         {
             cancellationToken.ThrowIfCancellationRequested();
 
+            if (uow.Items.HasTitle(request.Title))
+                return new ResponseDto<int>
+                {
+                    Succeed = false,
+                    Errors = new List<string> { "Item is already existing in the database" }
+                };
+
             Item item = new()
             {
                 Title = request.Title,

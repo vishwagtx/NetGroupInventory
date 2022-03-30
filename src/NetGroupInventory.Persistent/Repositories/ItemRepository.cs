@@ -8,5 +8,10 @@ namespace NetGroupInventory.Persistent.Repositories
         public ItemRepository(InventoryDbContext dbContext) : base(dbContext)
         {
         }
+
+        public bool HasTitle(string title)
+        {
+            return dbSet.Any(s => s.Title == title);
+        }
     }
 }

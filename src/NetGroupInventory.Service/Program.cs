@@ -14,9 +14,7 @@ builder.Services.AddAuthentication(IdentityServerAuthenticationDefaults.Authenti
 {
     options.Authority = identityUrl;
     options.RequireHttpsMetadata = false;
-    options.ApiName = "spa_api";
-    options.EnableCaching = true;
-    options.CacheDuration = TimeSpan.FromMinutes(60);
+    options.ApiName = "app_api";
 });
 
 builder.Services.AddControllers();
@@ -26,10 +24,21 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddEFConfigurations(builder.Configuration);
 builder.Services.AddMediatRConfiguration();
 builder.Services.AddScoped<IUserIdentity, UserIdentity>();
+builder.Services.AddCors(options =>
+{
+    // this defines a CORS policy called "default"
+    options.AddPolicy("default", policy =>
+    {
+        policy.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 
 var app = builder.Build();
 
+app.UseCors("default");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -37,12 +46,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseUserIdentityMiddleware();
-
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseUserIdentityMiddleware();
 
 app.MapControllers();
 
