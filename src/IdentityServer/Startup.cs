@@ -1,5 +1,6 @@
 ﻿using IdentityServer.Data;
 using IdentityServer.Data.Entities;
+using IdentityServer.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -77,7 +78,9 @@ namespace IdentityServer
                 .AddInMemoryApiResources(Config.ApiResources)
                 .AddInMemoryApiScopes(Config.ApiScopes)
                 .AddInMemoryClients(Config.Clients)
-                .AddInMemoryCaching();
+                .AddInMemoryCaching()
+                .AddProfileService<AspNetIdentityProfileService>();
+
 
             // not recommended for production - you need to store your key material somewhere secure
             builder.AddDeveloperSigningCredential();

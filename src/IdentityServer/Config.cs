@@ -89,10 +89,9 @@ namespace IdentityServer
                         ClientId = "mobile",
                         ClientName = "Mobile Client",
                         AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
-                        ClientSecrets =                    {
+                        ClientSecrets = {
                             new Secret("secret".Sha256())
                         },
-
                         AllowedScopes =
                         {
                             IdentityServerConstants.StandardScopes.OpenId,

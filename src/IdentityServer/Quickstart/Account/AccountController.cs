@@ -4,6 +4,7 @@
 
 using IdentityModel;
 using IdentityServer.Data.Entities;
+using IdentityServer.Quickstart.Account;
 using IdentityServer4;
 using IdentityServer4.Events;
 using IdentityServer4.Extensions;
@@ -133,7 +134,7 @@ namespace IdentityServerHost.Quickstart.UI
                             ExpiresUtc = DateTimeOffset.UtcNow.Add(AccountOptions.RememberMeLoginDuration)
                         };
                     }
-  
+
                     if (context != null)
                     {
                         if (context.IsNativeClient())
@@ -163,7 +164,7 @@ namespace IdentityServerHost.Quickstart.UI
                     }
                 }
 
-                await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials", clientId:context?.Client.ClientId));
+                await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials", clientId: context?.Client.ClientId));
                 ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
             }
 
@@ -172,7 +173,7 @@ namespace IdentityServerHost.Quickstart.UI
             return View(vm);
         }
 
-        
+
         /// <summary>
         /// Show logout page
         /// </summary>
@@ -204,6 +205,7 @@ namespace IdentityServerHost.Quickstart.UI
 
             if (User?.Identity.IsAuthenticated == true)
             {
+                await _signInManager.SignOutAsync();
                 // delete local authentication cookie
                 await HttpContext.SignOutAsync();
 
@@ -231,7 +233,58 @@ namespace IdentityServerHost.Quickstart.UI
         {
             return View();
         }
+        /// <summary>
+        /// Show Register page
+        /// </summary>
+        [AllowAnonymous]
+        public ActionResult Register(string returnUrl)
+        {
+            if (!string.IsNullOrEmpty(returnUrl))
+                TempData["ReturnUrl"] = returnUrl;
 
+            return View(new RegisterViewModel()
+            {
+                ReturnUrl = returnUrl ?? TempData["ReturnUrl"]?.ToString(),
+            });
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    Name = model.Name,
+                };
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    await _userManager.UpdateAsync(user);
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+
+                    if (string.IsNullOrEmpty(model.ReturnUrl))
+                        return RedirectToAction("Index", "Home");
+                    else
+                        return Redirect(model.ReturnUrl);
+                }
+                AddErrors(result);
+            }
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+        private void AddErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(error.Code, error.Description);
+            }
+        }
 
         /*****************************************/
         /* helper APIs for the AccountController */
