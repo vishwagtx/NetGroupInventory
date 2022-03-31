@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NetGroupInventory.Domain.Stoarge;
 
-namespace NetGroupInventory.Persistent.Stoarge
+namespace NetGroupInventory.Persistent.Storage
 {
     internal class InventoryConfiguration : IEntityTypeConfiguration<Inventory>
     {
@@ -19,7 +19,7 @@ namespace NetGroupInventory.Persistent.Stoarge
 
             builder.HasIndex(p => p.CreatedBy);
 
-            builder.HasOne(p => p.StoargeLevel).WithMany(m => m.InventoryItems).HasForeignKey(f => f.StorageLevelId);
+            builder.HasOne(p => p.StorageLevel).WithMany(m => m.InventoryItems).HasForeignKey(f => f.StorageLevelId);
             builder.HasOne(p => p.Item).WithMany(m => m.InventoryItems).HasForeignKey(f => f.ItemId);
         }
     }

@@ -3,26 +3,26 @@ using NetGroupInventory.Application.Common.Dtos;
 using NetGroupInventory.Application.Interfaces;
 using NetGroupInventory.Domain.Stoarge;
 
-namespace NetGroupInventory.Application.Stoarge.Commands.CreateStoargeLevel
+namespace NetGroupInventory.Application.Storage.Commands.CreateStorageLevel
 {
-    public class CreateStoargeLevelCommandHandler : BaseRequestHandler, IRequestHandler<CreateStoargeLevelCommand, ResponseDto<int>>
+    public class CreateStorageLevelCommandHandler : BaseRequestHandler, IRequestHandler<CreateStorageLevelCommand, ResponseDto<int>>
     {
-        public CreateStoargeLevelCommandHandler(IUnitOfWork uow, IUserIdentity identity) : base(uow, identity)
+        public CreateStorageLevelCommandHandler(IUnitOfWork uow, IUserIdentity identity) : base(uow, identity)
         {
         }
 
-        public async Task<ResponseDto<int>> Handle(CreateStoargeLevelCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseDto<int>> Handle(CreateStorageLevelCommand request, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (uow.StoargeLevels.HasLevel(request.Level))
+            if (uow.StorageLevels.HasLevel(request.Level, identity.Identifier))
                 return new ResponseDto<int>
                 {
                     Succeed = false,
                     Errors = new List<string> { "Storage level is already existing in the database" }
                 };
 
-            StoargeLevel level = new()
+            StorageLevel level = new()
             {
                 Level = request.Level,
                 Description = request.Description,
@@ -30,7 +30,7 @@ namespace NetGroupInventory.Application.Stoarge.Commands.CreateStoargeLevel
                 CreatedDateTime = DateTimeOffset.Now,
             };
 
-            uow.StoargeLevels.Create(level);
+            uow.StorageLevels.Create(level);
 
             await uow.SaveAsync();
 

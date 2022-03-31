@@ -2,7 +2,7 @@
 
 namespace NetGroupInventory.Domain.Stoarge
 {
-    public class StoargeLevel : IEntity, ITraceEntity
+    public class StorageLevel : IEntity, ITraceEntity
     {
         public int Id { get; set; }
         public string Level { get; set; } 

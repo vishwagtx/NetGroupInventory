@@ -10,7 +10,7 @@ namespace NetGroupInventory.Persistent
 
         private IItemCategoryRepository itemCategories;
         private IItemRepository items;
-        private IStoargeLevelRepository stoargeLevels;
+        private IStorageLevelRepository storageLevels;
         private IInventoryRepository inventories;
 
         public UnitOfWork(InventoryDbContext dbContext)
@@ -22,7 +22,7 @@ namespace NetGroupInventory.Persistent
 
         public IItemRepository Items => items ??= new ItemRepository(dbContext);
 
-        public IStoargeLevelRepository StoargeLevels => stoargeLevels ??= new StoargeLevelRepository(dbContext);
+        public IStorageLevelRepository StorageLevels => storageLevels ??= new StorageLevelRepository(dbContext);
 
         public IInventoryRepository Inventories => inventories ??= new InventoryRepository(dbContext);
 

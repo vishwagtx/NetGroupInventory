@@ -2,13 +2,13 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NetGroupInventory.Domain.Stoarge;
 
-namespace NetGroupInventory.Persistent.Stoarge
+namespace NetGroupInventory.Persistent.Storage
 {
-    internal class StoargeLevelConfiguration : IEntityTypeConfiguration<StoargeLevel>
+    internal class StorageLevelConfiguration : IEntityTypeConfiguration<StorageLevel>
     {
-        public void Configure(EntityTypeBuilder<StoargeLevel> builder)
+        public void Configure(EntityTypeBuilder<StorageLevel> builder)
         {
-            builder.ToTable("StoargeLevel");
+            builder.ToTable("StorageLevel");
 
             builder.HasKey(p => p.Id);
             builder.Property(p => p.Level).HasMaxLength(250).IsRequired();

@@ -19,6 +19,6 @@ namespace NetGroupInventory.Domain.Stoarge
 
 
         public virtual Item Item { get; set; } 
-        public virtual StoargeLevel StoargeLevel { get; set; } 
+        public virtual StorageLevel StorageLevel { get; set; } 
     }
 }

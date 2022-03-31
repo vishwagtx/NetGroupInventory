@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using NetGroupInventory.Application.Items.Commands.CreateItem;
-using NetGroupInventory.Application.Stoarge.Commands.CreateStoargeLevel;
+using NetGroupInventory.Application.Storage.Commands.CreateStorageLevel;
+using NetGroupInventory.Application.Storage.Queries.GetStorageLevelsForUser;
 
 namespace NetGroupInventory.Service.MediatR
 {
@@ -8,8 +9,9 @@ namespace NetGroupInventory.Service.MediatR
     {
         public static void AddMediatRConfiguration(this IServiceCollection services)
         {
-            services.AddMediatR(typeof(CreateStoargeLevelCommandHandler),
-                typeof(CreateItemCommandHandler)
+            services.AddMediatR(typeof(CreateStorageLevelCommandHandler),
+                typeof(CreateItemCommandHandler),
+                typeof(GetStorageLevelsForUserQueryHandler)
                 );
         }
     }

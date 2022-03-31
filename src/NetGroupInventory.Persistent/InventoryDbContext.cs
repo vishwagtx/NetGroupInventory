@@ -2,7 +2,7 @@
 using NetGroupInventory.Domain.Items;
 using NetGroupInventory.Domain.Stoarge;
 using NetGroupInventory.Persistent.Items;
-using NetGroupInventory.Persistent.Stoarge;
+using NetGroupInventory.Persistent.Storage;
 
 namespace NetGroupInventory.Persistent
 {
@@ -16,7 +16,7 @@ namespace NetGroupInventory.Persistent
 
         public virtual DbSet<Item> Items { get; set; }
 
-        public virtual DbSet<StoargeLevel> StoargeLevels { get; set; }
+        public virtual DbSet<StorageLevel> StoargeLevels { get; set; }
 
         public virtual DbSet<Inventory> Inventories { get; set; }
 
@@ -25,7 +25,7 @@ namespace NetGroupInventory.Persistent
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfiguration(new ItemCategoryConfiguration());
-            modelBuilder.ApplyConfiguration(new StoargeLevelConfiguration());
+            modelBuilder.ApplyConfiguration(new StorageLevelConfiguration());
             modelBuilder.ApplyConfiguration(new ItemConfiguration());
             modelBuilder.ApplyConfiguration(new InventoryConfiguration());
         }

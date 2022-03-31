@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace NetGroupInventory.Application.Stoarge.Commands.Dtos
+namespace NetGroupInventory.Application.Storage.Commands.Dtos
 {
-    public abstract class BaseStoargeLevelDto
+    public abstract class BaseStorageLevelDto
     {
         [Required]
         [StringLength(250)]
