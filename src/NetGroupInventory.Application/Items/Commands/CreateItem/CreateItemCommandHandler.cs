@@ -15,7 +15,7 @@ namespace NetGroupInventory.Application.Items.Commands.CreateItem
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (uow.Items.HasTitle(request.Title))
+            if (uow.Items.HasTitle(request.Title, identity.Identifier))
                 return new ResponseDto<int>
                 {
                     Succeed = false,

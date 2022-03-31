@@ -14,8 +14,10 @@ namespace NetGroupInventory.Application.Storage.Queries.GetStorageLevelsForUser
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            return (await uow.StorageLevels.GetByUserId(identity.Identifier))
-            .Select(s => new ViewStorageLevelDto
+            var levels = string.IsNullOrEmpty(request.Keyword) ? (await uow.StorageLevels.GetByUserId(identity.Identifier)) :
+                (await uow.StorageLevels.GetByKeywordAndUserId(request.Keyword, identity.Identifier));
+
+            return levels.Select(s => new ViewStorageLevelDto
             {
                 Id = s.Id,
                 Level = s.Level,
