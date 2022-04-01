@@ -27,7 +27,7 @@ namespace NetGroupInventory.Persistent.Repositories
 
         public async Task<IList<StorageLevel>> GetByKeywordAndUserId(string keyword, string userId)
         {
-            return await dbSet.Where(s => s.CreatedBy == userId && (s.Level == keyword || s.Description.Contains(keyword))).ToListAsync();
+            return await dbSet.Where(s => s.CreatedBy == userId && (s.Level.Contains(keyword) || s.Description.Contains(keyword))).ToListAsync();
         }
     }
 }

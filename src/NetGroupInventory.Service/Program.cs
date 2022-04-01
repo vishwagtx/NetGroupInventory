@@ -1,5 +1,6 @@
 using IdentityServer4.AccessTokenValidation;
 using NetGroupInventory.Application.Common.Dtos;
+using NetGroupInventory.Infrastructure;
 using NetGroupInventory.Persistent;
 using NetGroupInventory.Service.MediatR;
 using NetGroupInventory.Service.Middleware;
@@ -22,6 +23,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddEFConfigurations(builder.Configuration);
+builder.Services.AddInfraConfigurations();
 builder.Services.AddMediatRConfiguration();
 builder.Services.AddScoped<IUserIdentity, UserIdentity>();
 builder.Services.AddCors(options =>
