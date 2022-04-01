@@ -7,5 +7,7 @@ namespace NetGroupInventory.Application.Interfaces.Repositories
         Task<IList<Inventory>> GetByUserId(string userId);
 
         Task<IList<Inventory>> GetByKeywordAndUserId(string keyword, string userId);
+
+        Task<Inventory> GetByIdWithDetail(int id);
     }
 }

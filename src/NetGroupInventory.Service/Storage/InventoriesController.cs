@@ -5,6 +5,7 @@ using NetGroupInventory.Application.Storage.Commands.CreateInventory;
 using NetGroupInventory.Application.Storage.Commands.DeleteInventory;
 using NetGroupInventory.Application.Storage.Commands.UpdateInventory;
 using NetGroupInventory.Application.Storage.Queries.GetInventoriesForUser;
+using NetGroupInventory.Application.Storage.Queries.GetInventoryById;
 
 namespace NetGroupInventory.Service.Storage
 {
@@ -50,6 +51,16 @@ namespace NetGroupInventory.Service.Storage
             return Ok(await bus.Send(new GetInventoriesForUserQuery
             {
                 Keyword = keyword
+            }));
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            return Ok(await bus.Send(new GetInventoryByIdQuery
+            {
+                Id = id
             }));
         }
     }

@@ -8,6 +8,7 @@ using NetGroupInventory.Application.Storage.Commands.CreateStorageLevel;
 using NetGroupInventory.Application.Storage.Commands.DeleteInventory;
 using NetGroupInventory.Application.Storage.Commands.UpdateInventory;
 using NetGroupInventory.Application.Storage.Commands.UpdateStorageLevel;
+using NetGroupInventory.Application.Storage.Querieinventory.GetInventoryById;
 using NetGroupInventory.Application.Storage.Queries.GetInventoriesForUser;
 using NetGroupInventory.Application.Storage.Queries.GetStorageLevelsForUser;
 
@@ -27,7 +28,8 @@ namespace NetGroupInventory.Service.MediatR
                 typeof(CreateInventoryCommandHandler),
                 typeof(UpdateInventoryCommandHandler),
                 typeof(DeleteInventoryCommandHandler),
-                typeof(GetInventoriesForUserQueryHandler)
+                typeof(GetInventoriesForUserQueryHandler),
+                typeof(GetInventoryByIdQueryHandler)
                 );
         }
     }

@@ -27,5 +27,13 @@ namespace NetGroupInventory.Persistent.Repositories
              i.StorageLevel.Level.Contains(keyword) || i.Note.Contains(keyword) || i.SerialNumber.Contains(keyword) || i.Quantity.ToString().Contains(keyword)
             )).ToListAsync();
         }
+
+        public async Task<Inventory> GetByIdWithDetail(int id)
+        {
+            return await dbSet.Include(i => i.Item)
+            .ThenInclude(i => i.ItemCategory)
+            .Include(i => i.StorageLevel)
+            .SingleOrDefaultAsync(i => i.Id == id);
+        }
     }
 }
