@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NetGroupInventory.Application.Items.Commands.CreateItem;
 using NetGroupInventory.Application.Items.Commands.UpdateItem;
+using NetGroupInventory.Application.Items.Queries.GetItemById;
 using NetGroupInventory.Application.Items.Queries.GetItemsForUser;
 using NetGroupInventory.Application.Storage.Commands.DeleteStorageLevel;
 
@@ -45,11 +46,21 @@ namespace NetGroupInventory.Service.Items
         [HttpGet]
         [Route("search")]
         [Route("search/{keyword}")]
-        public async Task<IActionResult> Get(string? keyword)
+        public async Task<IActionResult> Search(string? keyword)
         {
             return Ok(await bus.Send(new GetItemsForUserQuery
             {
                 Keyword = keyword
+            }));
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            return Ok(await bus.Send(new GetItemByIdQuery
+            {
+                Id = id
             }));
         }
     }

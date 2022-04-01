@@ -1,4 +1,4 @@
-﻿namespace NetGroupInventory.Application.Items.Queries.GetItemsForUser
+﻿namespace NetGroupInventory.Application.Items.Queries.Dtos
 {
     public class ViewItemDto
     {

@@ -13,4 +13,8 @@
     <ProjectReference Include="..\NetGroupInventory.Domain\NetGroupInventory.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Items\Commands\Dtos\" />
+  </ItemGroup>
+
 </Project>

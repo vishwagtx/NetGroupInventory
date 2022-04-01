@@ -27,8 +27,13 @@ namespace NetGroupInventory.Persistent.Repositories
 
         public async Task<IList<Item>> GetByKeywordAndUserId(string keyword, string userId)
         {
-            return await dbSet.Include(i => i.ItemCategory).Where(i => i.CreatedBy == userId && 
+            return await dbSet.Include(i => i.ItemCategory).Where(i => i.CreatedBy == userId &&
             (i.Title.Contains(keyword) || i.Description.Contains(keyword) || i.ItemCategory.Category.Contains(keyword))).ToListAsync();
+        }
+
+        public async Task<Item> GetByIdWithDetails(int id)
+        {
+            return await dbSet.Include(i => i.ItemCategory).FirstOrDefaultAsync(f => f.Id == id);
         }
     }
 }

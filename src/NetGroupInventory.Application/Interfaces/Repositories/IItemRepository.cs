@@ -8,5 +8,6 @@ namespace NetGroupInventory.Application.Interfaces.Repositories
         bool HasTitle(string title, string userId, int id);
         Task<IList<Item>> GetByUserId(string userId);
         Task<IList<Item>> GetByKeywordAndUserId(string keyword, string userId);
+        Task<Item> GetByIdWithDetails(int id);
     }
 }

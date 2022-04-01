@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using NetGroupInventory.Application.Common.Dtos;
 using NetGroupInventory.Application.Interfaces;
+using NetGroupInventory.Application.Items.Queries.Dtos;
 
 namespace NetGroupInventory.Application.Items.Queries.GetItemsForUser
 {
