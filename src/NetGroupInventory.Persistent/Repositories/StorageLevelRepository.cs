@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NetGroupInventory.Application.Interfaces.Repositories;
+using NetGroupInventory.Domain.Entities;
 using NetGroupInventory.Domain.Stoarge;
 
 namespace NetGroupInventory.Persistent.Repositories
@@ -28,6 +29,16 @@ namespace NetGroupInventory.Persistent.Repositories
         public async Task<IList<StorageLevel>> GetByKeywordAndUserId(string keyword, string userId)
         {
             return await dbSet.Where(s => s.CreatedBy == userId && (s.Level.Contains(keyword) || s.Description.Contains(keyword))).ToListAsync();
+        }
+
+        public async Task<IList<GroupEntity>> GetUserWiseCount()
+        {
+            var levelGroup = await dbSet.GroupBy(g => g.CreatedBy).Select(s => new GroupEntity {
+                Key = s.Key, 
+                Count = s.Count()
+            }).ToListAsync();
+
+            return levelGroup;
         }
     }
 }

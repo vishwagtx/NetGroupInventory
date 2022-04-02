@@ -2,6 +2,7 @@ using IdentityServer4.AccessTokenValidation;
 using NetGroupInventory.Application.Common.Dtos;
 using NetGroupInventory.Infrastructure;
 using NetGroupInventory.Persistent;
+using NetGroupInventory.Service.HttpHandlers;
 using NetGroupInventory.Service.MediatR;
 using NetGroupInventory.Service.Middleware;
 
@@ -36,11 +37,14 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
     });
 });
-
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<CustomHttpClientHandler>();
+builder.Services.AddHttpClient("authClient").AddHttpMessageHandler<CustomHttpClientHandler>();
 
 var app = builder.Build();
 
 app.UseCors("default");
+app.ConfigureExceptionHandler();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

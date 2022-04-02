@@ -8,6 +8,7 @@ namespace NetGroupInventory.Application.Interfaces
         IItemRepository Items { get; }
         IStorageLevelRepository StorageLevels { get; }
         IInventoryRepository Inventories { get; }
+        IActivityRepository Activities { get; }
 
         void Save();
 

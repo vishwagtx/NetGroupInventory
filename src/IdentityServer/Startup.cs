@@ -39,11 +39,6 @@ namespace IdentityServer
                 jwt.Authority = Configuration.GetValue<string>("identityServerUrl");
                 jwt.RequireHttpsMetadata = false;
                 jwt.Audience = "app_api"; 
-                jwt.TokenValidationParameters = new TokenValidationParameters
-                {
-                    NameClaimType = "name",
-                    RoleClaimType = "role",
-                };
             });
 
 

@@ -3,6 +3,7 @@ using NetGroupInventory.Application.Items.Commands.CreateItem;
 using NetGroupInventory.Application.Items.Commands.DeleteItem;
 using NetGroupInventory.Application.Items.Commands.UpdateItem;
 using NetGroupInventory.Application.Items.Queries.GetItemCategories;
+using NetGroupInventory.Application.Statistics.GetStatistic;
 using NetGroupInventory.Application.Storage.Commands.CreateInventory;
 using NetGroupInventory.Application.Storage.Commands.CreateStorageLevel;
 using NetGroupInventory.Application.Storage.Commands.DeleteInventory;
@@ -29,7 +30,8 @@ namespace NetGroupInventory.Service.MediatR
                 typeof(UpdateInventoryCommandHandler),
                 typeof(DeleteInventoryCommandHandler),
                 typeof(GetInventoriesForUserQueryHandler),
-                typeof(GetInventoryByIdQueryHandler)
+                typeof(GetInventoryByIdQueryHandler),
+                typeof(GetStatisticQueryHandler)
                 );
         }
     }

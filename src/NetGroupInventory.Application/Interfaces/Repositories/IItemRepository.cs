@@ -1,4 +1,5 @@
-﻿using NetGroupInventory.Domain.Items;
+﻿using NetGroupInventory.Domain.Entities;
+using NetGroupInventory.Domain.Items;
 
 namespace NetGroupInventory.Application.Interfaces.Repositories
 {
@@ -9,5 +10,6 @@ namespace NetGroupInventory.Application.Interfaces.Repositories
         Task<IList<Item>> GetByUserId(string userId);
         Task<IList<Item>> GetByKeywordAndUserId(string keyword, string userId);
         Task<Item> GetByIdWithDetails(int id);
+        Task<IList<GroupEntity>> GetUserWiseCount();
     }
 }

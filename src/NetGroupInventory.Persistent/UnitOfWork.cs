@@ -12,6 +12,7 @@ namespace NetGroupInventory.Persistent
         private IItemRepository items;
         private IStorageLevelRepository storageLevels;
         private IInventoryRepository inventories;
+        private IActivityRepository activities;
 
         public UnitOfWork(InventoryDbContext dbContext)
         {
@@ -25,6 +26,8 @@ namespace NetGroupInventory.Persistent
         public IStorageLevelRepository StorageLevels => storageLevels ??= new StorageLevelRepository(dbContext);
 
         public IInventoryRepository Inventories => inventories ??= new InventoryRepository(dbContext);
+
+        public IActivityRepository Activities => activities ??= new ActivityRepository(dbContext);
 
 
         public void Save()
