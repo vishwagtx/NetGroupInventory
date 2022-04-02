@@ -14,7 +14,7 @@ namespace NetGroupInventory.Service.Middleware
 
         public Task Invoke(HttpContext httpContext, IUserIdentity userIdentity)
         {
-            if (httpContext.User.Identity.IsAuthenticated)
+            if (httpContext.User?.Identity?.IsAuthenticated ?? false)
             {
                 userIdentity.Name = httpContext.User.Identity.Name;
                 userIdentity.UserName = httpContext.User.Claims.FirstOrDefault(x => x.Type == "userName")?.Value;
