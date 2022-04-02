@@ -6,4 +6,6 @@ There are two hosting projects used to develop this requirement,
 2. NetGroupInventory.Service - This is using for the manage inventory system related transactions
   Debug url:- https://localhost:44321/
 
+*Important -Both services above should be up and run to run the Angular project
+
 Databases are hosted in the Azure cloud and Ef core is used as a database communication technology
