@@ -2,9 +2,9 @@
 
 There are two hosting projects used to develop this requirement,
 1. IdentityServer - This is using for the authentication, authentication, user managment - https://identityserver4.readthedocs.io/en/latest/index.html
-  Debug url:- http://localhost:5001/
+  - Debug url:- http://localhost:5001/
 2. NetGroupInventory.Service - This is using for the manage inventory system related transactions
-  Debug url:- https://localhost:44321/
+  - Debug url:- https://localhost:44321/
 
 *Important -Both services above should be up and run to run the Angular project
 
