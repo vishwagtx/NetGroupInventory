@@ -9,3 +9,7 @@ There are two hosting projects used to develop this requirement,
 *Important -Both services above should be up and run to run the Angular project
 
 Databases are hosted in the Azure cloud and Ef core is used as a database communication technology
+
+Admin password
+user name :- admin@test.com
+password: -1qaz!QAZ
