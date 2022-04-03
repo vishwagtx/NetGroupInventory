@@ -18,4 +18,4 @@ Technologies :- .Net 6, MediateR, Ef core, RestEase, IdenityServer4
 
 Architecture :- Clean architecture
 
-Patterns: - CQRS, Rpository, Unit of work 
+Patterns: - CQRS, Repository, Unit of work 
