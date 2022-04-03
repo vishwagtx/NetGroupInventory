@@ -13,3 +13,5 @@ Databases are hosted in the Azure cloud and Ef core is used as a database commun
 Admin password
  - user name :- admin@test.com
  - password: :- 1qaz!QAZ
+
+Technologies :- .Net 6, MediateR, Ef core, RestEase, IdenityServer4
