@@ -15,5 +15,7 @@ Admin password
  - password: :- 1qaz!QAZ
 
 Technologies :- .Net 6, MediateR, Ef core, RestEase, IdenityServer4
+
 Architecture :- Clean architecture
+
 Patterns: - CQRS, Rpository, Unit of work 
