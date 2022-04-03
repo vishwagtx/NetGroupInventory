@@ -25,7 +25,7 @@ namespace NetGroupInventory.Application.Test.Storage.Commands.UpdateStorageLevel
         }
 
         [Fact]
-        public async Task ShouldReturnErrorMessageWhenStorageLevelIsExistingInDatabase()
+        public async Task Should_Return_ErrorMessage_When_StorageLevel_Is_Existing_In_Database()
         {
             int storageLevelId = 1;
             uow.Setup(s => s.StorageLevels.HasLevel(storageLevel, userId, storageLevelId)).Returns(true);
@@ -41,7 +41,7 @@ namespace NetGroupInventory.Application.Test.Storage.Commands.UpdateStorageLevel
         }
 
         [Fact]
-        public async Task ShouldBeSucccedEWhenStorageLevelIsNotExistingInDatabase()
+        public async Task Should_Be_Succced_When_StorageLevel_IsNot_Existing_In_Database()
         {
             int storageLevelId = 1;
 
