@@ -1,4 +1,4 @@
-.Net verion  = .Net 6
+.Net version  = .Net 6
 
 There are two hosting projects used to develop this requirement,
 1. IdentityServer - This is using for the authentication, authentication and user managment - https://identityserver4.readthedocs.io/en/latest/index.html
