@@ -30,16 +30,16 @@ jobs:
           dotnet-version: ${{ matrix.dotnet-version }}
 
       - name: Restore Dependencies
-        run: dotnet restore MyWpfApp.sln
+        run: dotnet restore NetGroupInventory.sln
 
       - name: Build Project
-        run: dotnet build MyWpfApp.sln --configuration Release --no-restore
+        run: dotnet build NetGroupInventory.sln --configuration Release --no-restore
 
       - name: Run Tests
-        run: dotnet test MyWpfApp.sln --no-build --configuration Release --verbosity normal
+        run: dotnet test NetGroupInventory.sln --no-build --configuration Release --verbosity normal
 
       - name: Publish Artifacts (Optional)
-        run: dotnet publish MyWpfApp.sln --configuration Release --output ./publish
+        run: dotnet publish NetGroupInventory.sln --configuration Release --output ./publish
 
       - name: Upload Build Artifacts (Optional)
         uses: actions/upload-artifact@v4  # ✅ Updated to v4
