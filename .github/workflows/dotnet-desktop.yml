@@ -45,14 +45,6 @@ jobs:
           path: '**/*.trx' # Path to test results
           reporter: dotnet-trx
 
-      - name: Publish Coverage Report (Optional - if using code coverage)
-        if: ${{ always() }} # Ensure this step runs even if tests fail.
-        uses: codecov/codecov-action@v3
-        with:
-          flags: unittests
-          fail_ci_if_error: true
-          verbose: true
-
       - name: Upload Build Artifacts (Optional)
         uses: actions/upload-artifact@v4  # ✅ Updated to v4
         with:
