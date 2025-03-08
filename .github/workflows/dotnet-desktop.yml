@@ -59,7 +59,8 @@ jobs:
           dotnet sonarscanner begin /k:$project_key /o:$organization 
           /d:sonar.token=$sonarqube_token 
           /d:sonar.host.url="https://sonarcloud.io"
-
+          /d:sonar.qualitygate.wait=true
+          
       - name: Build Project
         run: dotnet build NetGroupInventory.sln --configuration Release --no-restore
 
@@ -77,7 +78,7 @@ jobs:
         run: dotnet sonarscanner end /d:sonar.token=$sonarqube_token
 
       - name: Upload Sonar Report Artifact (Optional)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sonar-report
           path: .scannerwork 
