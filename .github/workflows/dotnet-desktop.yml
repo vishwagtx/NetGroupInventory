@@ -51,6 +51,13 @@ jobs:
       - name: Restore Dependencies
         run: dotnet restore NetGroupInventory.sln
 
+      - name: Install Sonar Scanner
+        run: dotnet tool install --global dotnet-sonarscanner  
+
+      - name: Begin Sonar Analysis
+        run: |
+          dotnet sonarscanner begin /k:$project_key /o:$organization /d:sonar.token=$sonarqube_token /d:sonar.host.url="https://sonarcloud.io"
+
       - name: Build Project
         run: dotnet build NetGroupInventory.sln --configuration Release --no-restore
 
@@ -64,13 +71,6 @@ jobs:
           path: '**/*.trx' # Path to test results
           reporter: dotnet-trx
           
-      - name: Install Sonar Scanner
-        run: dotnet tool install --global dotnet-sonarscanner  
-
-      - name: Begin Sonar Analysis
-        run: |
-          dotnet sonarscanner begin /k:$project_key /o:$organization /d:sonar.token=$sonarqube_token /d:sonar.host.url="https://sonarcloud.io"
-
       - name: End Sonar Analysis
         run: dotnet sonarscanner end /d:sonar.token=$sonarqube_token
 
