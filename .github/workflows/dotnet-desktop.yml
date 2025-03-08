@@ -82,8 +82,8 @@ jobs:
       - name: Publish Test Results
         uses: dorny/test-reporter@v1
         with:
-          name: .NET Unit Tests
-          path: '**/*.trx' # Path to test results
+          name: SonarQube
+          path: '**/coverage.opencover.xml' # Path to test results
           reporter: dotnet-trx
           
 
