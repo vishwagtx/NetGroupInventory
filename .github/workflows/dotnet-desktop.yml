@@ -79,21 +79,21 @@ jobs:
         run: dotnet sonarscanner end /d:sonar.token=$sonarqube_token
         continue-on-error: true
         
-      # Get Quality Gate Status via SonarQube API
-      - name: Get Analysis ID Using Build ID
-        id: get_analysis_id
+      # Use the analysis id to retrieve Quality Gate status
+      - name: Get and Publish Quality Gate Status using Analysis ID
+        id: qualitygate_status
         run: |
-          echo "Querying CE Activity for project ${{ secrets.PROJECT_KEY }}..."
-          ce_response=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" "https://sonarcloud.io/api/ce/activity?component=$project_key")
-          echo "$ce_response" > ce_activity.json
-          # Filter tasks for one matching our build id (assumes the field 'buildString' is recorded)
-          analysisId=$(echo "$ce_response" | jq -r '.current.tasks[] | select(.buildString=="'"${GITHUB_RUN_ID}"'") | .analysisId')
-          if [ -z "$analysisId" ]; then
-            echo "No analysis found with build id ${GITHUB_RUN_ID}."
+          analysisId="${{ steps.get_analysis_id.outputs.analysisId }}"
+          echo "Querying Quality Gate for Analysis ID: $analysisId"
+          qg_response=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" "https://sonarcloud.io/api/qualitygates/get_by_analysis?analysisId=${analysisId}")
+          echo "$qg_response" > qualitygate.json
+          status=$(echo "$qg_response" | jq -r '.projectStatus.status')
+          echo "Quality Gate Status: $status"
+          echo "::set-output name=status::$status"
+          if [ "$status" != "OK" ]; then
+            echo "Quality Gate did not pass!"
             exit 1
           fi
-          echo "Found Analysis ID: $analysisId"
-          echo "::set-output name=analysisId::$analysisId"
 
       - name: Upload Build Artifacts (Optional)
         uses: actions/upload-artifact@v4  # ✅ Updated to v4
