@@ -80,40 +80,40 @@ jobs:
         continue-on-error: true
         
       - name: Get SonarQube Quality Gate Status
-  run: |
-    if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-      # Fetch PR-specific SonarQube analysis
-      PR_ID=${{ github.event.pull_request.number }}
-      echo "Fetching SonarQube PR status for PR #$PR_ID..."
-      SONAR_RESPONSE=$(curl -s -u $sonarqube_token: "https://sonarcloud.io/api/qualitygates/project_status?projectKey=$project_key&pullRequest=$PR_ID")
-    else
-      # Fetch Branch-specific SonarQube analysis
-      echo "Fetching SonarQube branch status..."
-      SONAR_RESPONSE=$(curl -s -u $sonarqube_token: "https://sonarcloud.io/api/qualitygates/project_status?projectKey=$project_key")
-    fi
-    
-    # Extract key metrics using jq
-    STATUS=$(echo "$SONAR_RESPONSE" | jq -r '.projectStatus.status')
-    
-    # Fetch additional quality metrics
-    METRICS_RESPONSE=$(curl -s -u $sonarqube_token: "https://sonarcloud.io/api/measures/component?component=$project_key&metricKeys=bugs,code_smells,coverage")
-    
-    BUGS=$(echo "$METRICS_RESPONSE" | jq -r '.component.measures[] | select(.metric == "bugs") | .value')
-    CODE_SMELLS=$(echo "$METRICS_RESPONSE" | jq -r '.component.measures[] | select(.metric == "code_smells") | .value')
-    COVERAGE=$(echo "$METRICS_RESPONSE" | jq -r '.component.measures[] | select(.metric == "coverage") | .value')
-
-    # Handle empty values gracefully
-    BUGS=${BUGS:-0}
-    CODE_SMELLS=${CODE_SMELLS:-0}
-    COVERAGE=${COVERAGE:-0}
-
-    # Format the output
-    echo ""
-    echo "🔹 **Quality Gate Status:** $([[ $STATUS == "OK" ]] && echo '✅ Passed' || echo '🔴 Failed')"
-    echo "✅ **Bugs:** $BUGS"
-    echo "🔴 **Code Smells:** $CODE_SMELLS"
-    echo "🟡 **Coverage:** $COVERAGE%"
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            # Fetch PR-specific SonarQube analysis
+            PR_ID=${{ github.event.pull_request.number }}
+            echo "Fetching SonarQube PR status for PR #$PR_ID..."
+            SONAR_RESPONSE=$(curl -s -u $sonarqube_token: "https://sonarcloud.io/api/qualitygates/project_status?projectKey=$project_key&pullRequest=$PR_ID")
+          else
+            # Fetch Branch-specific SonarQube analysis
+            echo "Fetching SonarQube branch status..."
+            SONAR_RESPONSE=$(curl -s -u $sonarqube_token: "https://sonarcloud.io/api/qualitygates/project_status?projectKey=$project_key")
+          fi
           
+          # Extract key metrics using jq
+          STATUS=$(echo "$SONAR_RESPONSE" | jq -r '.projectStatus.status')
+          
+          # Fetch additional quality metrics
+          METRICS_RESPONSE=$(curl -s -u $sonarqube_token: "https://sonarcloud.io/api/measures/component?component=$project_key&metricKeys=bugs,code_smells,coverage")
+          
+          BUGS=$(echo "$METRICS_RESPONSE" | jq -r '.component.measures[] | select(.metric == "bugs") | .value')
+          CODE_SMELLS=$(echo "$METRICS_RESPONSE" | jq -r '.component.measures[] | select(.metric == "code_smells") | .value')
+          COVERAGE=$(echo "$METRICS_RESPONSE" | jq -r '.component.measures[] | select(.metric == "coverage") | .value')
+      
+          # Handle empty values gracefully
+          BUGS=${BUGS:-0}
+          CODE_SMELLS=${CODE_SMELLS:-0}
+          COVERAGE=${COVERAGE:-0}
+      
+          # Format the output
+          echo ""
+          echo "🔹 **Quality Gate Status:** $([[ $STATUS == "OK" ]] && echo '✅ Passed' || echo '🔴 Failed')"
+          echo "✅ **Bugs:** $BUGS"
+          echo "🔴 **Code Smells:** $CODE_SMELLS"
+          echo "🟡 **Coverage:** $COVERAGE%"
+                
 
       - name: Upload Build Artifacts (Optional)
         uses: actions/upload-artifact@v4  # ✅ Updated to v4
