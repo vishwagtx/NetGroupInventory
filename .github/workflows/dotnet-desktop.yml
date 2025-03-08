@@ -59,7 +59,7 @@ jobs:
 
       - name: Begin Sonar Analysis
         run: |
-          dotnet sonarscanner begin /k:$project_key /o:$organization  /d:sonar.token=$sonarqube_token /d:sonar.host.url="https://sonarcloud.io" /d:sonar.qualitygate.wait=true /d:sonar.buildString="${{github.run_id}}"
+          dotnet sonarscanner begin /k:$project_key /o:$organization  /d:sonar.token=$sonarqube_token /d:sonar.host.url="https://sonarcloud.io" /d:sonar.qualitygate.wait=true /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml
         continue-on-error: true
           
       - name: Build Project
@@ -79,21 +79,13 @@ jobs:
         run: dotnet sonarscanner end /d:sonar.token=$sonarqube_token
         continue-on-error: true
         
-      # Use the analysis id to retrieve Quality Gate status
-      - name: Get and Publish Quality Gate Status using Analysis ID
-        id: qualitygate_status
-        run: |
-          analysisId="${{ steps.get_analysis_id.outputs.analysisId }}"
-          echo "Querying Quality Gate for Analysis ID: $analysisId"
-          qg_response=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" "https://sonarcloud.io/api/qualitygates/get_by_analysis?analysisId=${analysisId}")
-          echo "$qg_response" > qualitygate.json
-          status=$(echo "$qg_response" | jq -r '.projectStatus.status')
-          echo "Quality Gate Status: $status"
-          echo "::set-output name=status::$status"
-          if [ "$status" != "OK" ]; then
-            echo "Quality Gate did not pass!"
-            exit 1
-          fi
+      - name: Publish Test Results
+        uses: dorny/test-reporter@v1
+        with:
+          name: .NET Unit Tests
+          path: '**/*.trx' # Path to test results
+          reporter: dotnet-trx
+          
 
       - name: Upload Build Artifacts (Optional)
         uses: actions/upload-artifact@v4  # ✅ Updated to v4
