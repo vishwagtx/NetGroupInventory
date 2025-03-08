@@ -56,7 +56,11 @@ jobs:
 
       - name: Begin Sonar Analysis
         run: |
-          dotnet sonarscanner begin /k:$project_key /o:$organization /d:sonar.token=$sonarqube_token /d:sonar.host.url="https://sonarcloud.io" /d:sonar.qualitygate.wait=true
+          dotnet sonarscanner begin /k:$project_key /o:$organization \ 
+          /d:sonar.token=$sonarqube_token \ 
+          /d:sonar.host.url="https://sonarcloud.io" \ 
+          /d:sonar.qualitygate.wait=true \ 
+          /d:sonar.report.export.path=sonar-report.json  # Export summary
           
       - name: Build Project
         run: dotnet build NetGroupInventory.sln --configuration Release --no-restore
@@ -74,11 +78,14 @@ jobs:
       - name: End Sonar Analysis
         run: dotnet sonarscanner end /d:sonar.token=$sonarqube_token
 
-      - name: Upload Sonar Report Artifact (Optional)
-        uses: actions/upload-artifact@v4
-        with:
-          name: sonar-report
-          path: .scannerwork 
+      - name: Publish SonarQube Summary
+        if: always()
+        run: |
+          echo "### SonarQube Analysis Summary 🚀" >> $GITHUB_STEP_SUMMARY
+          echo "🔹 **Quality Gate Status**: $(jq -r '.projectStatus.status' sonar-report.json)" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Bugs**: $(jq -r '.issues | length' sonar-report.json)" >> $GITHUB_STEP_SUMMARY
+          echo "🔴 **Code Smells**: $(jq -r '.metrics[0].value' sonar-report.json)" >> $GITHUB_STEP_SUMMARY
+          echo "🟡 **Coverage**: $(jq -r '.metrics[1].value' sonar-report.json)%" >> $GITHUB_STEP_SUMMARY
 
       - name: Upload Build Artifacts (Optional)
         uses: actions/upload-artifact@v4  # ✅ Updated to v4
