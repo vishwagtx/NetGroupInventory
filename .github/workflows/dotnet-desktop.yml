@@ -11,10 +11,29 @@ on:
       - main
       - develop
       - master
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Choose an environment'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+      deploy_version:
+        description: 'Deployment Version'
+        required: false
+        default: 'latest'
+        type: string
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      sonarqube_token: 7d3dd14084991553da3295bddca50b258530e524
+      project_key: bitmatrix_core
+      organization: bitmatrix
 
     strategy:
       matrix:
@@ -32,18 +51,79 @@ jobs:
       - name: Restore Dependencies
         run: dotnet restore NetGroupInventory.sln
 
+      # Install SonarScanner for .NET
+      - name: Install SonarScanner for .NET
+        run: |
+          dotnet tool install --global dotnet-sonarscanner
+          export PATH="$PATH:/root/.dotnet/tools"  
+
+      - name: Begin Sonar Analysis
+        run: |
+          dotnet sonarscanner begin /k:$project_key /o:$organization  /d:sonar.token=$sonarqube_token /d:sonar.host.url="https://sonarcloud.io" /d:sonar.qualitygate.wait=true /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
+        continue-on-error: true
+          
       - name: Build Project
         run: dotnet build NetGroupInventory.sln --configuration Release --no-restore
 
       - name: Run unit tests
         run: dotnet test --configuration Release --no-build --logger "trx;LogFileName=test-results.trx"
-
+      
       - name: Publish Test Results
         uses: dorny/test-reporter@v1
         with:
           name: .NET Unit Tests
           path: '**/*.trx' # Path to test results
           reporter: dotnet-trx
+          
+      - name: End Sonar Analysis
+        run: dotnet sonarscanner end /d:sonar.token=$sonarqube_token
+        continue-on-error: true
+        
+      - name: SonarQube Quality Gate Status
+        run: |          
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            # Fetch PR-specific SonarQube analysis
+            PR_ID=${{ github.event.pull_request.number }}
+            echo "Fetching SonarQube PR status for PR #$PR_ID..."
+            SONAR_RESPONSE=$(curl -s -u $sonarqube_token: "https://sonarcloud.io/api/qualitygates/project_status?projectKey=$project_key&pullRequest=$PR_ID")
+          else
+            # Fetch Branch-specific SonarQube analysis
+            echo "Fetching SonarQube branch status..."
+            SONAR_RESPONSE=$(curl -s -u $sonarqube_token: "https://sonarcloud.io/api/qualitygates/project_status?projectKey=$project_key")
+          fi
+          
+          # Extract key metrics using jq
+          STATUS=$(echo "$SONAR_RESPONSE" | jq -r '.projectStatus.status')
+          
+          # Fetch additional quality metrics
+          METRICS_RESPONSE=$(curl -s -u $sonarqube_token: "https://sonarcloud.io/api/measures/component?component=$project_key&metricKeys=bugs,code_smells,coverage")
+          
+          BUGS=$(echo "$METRICS_RESPONSE" | jq -r '.component.measures[] | select(.metric == "bugs") | .value')
+          CODE_SMELLS=$(echo "$METRICS_RESPONSE" | jq -r '.component.measures[] | select(.metric == "code_smells") | .value')
+          COVERAGE=$(echo "$METRICS_RESPONSE" | jq -r '.component.measures[] | select(.metric == "coverage") | .value')
+      
+          # Handle empty values gracefully
+          BUGS=${BUGS:-0}
+          CODE_SMELLS=${CODE_SMELLS:-0}
+          COVERAGE=${COVERAGE:-0}
+      
+          # Format the output
+          echo "### SonarQube Analysis Summary 🚀" >> $GITHUB_STEP_SUMMARY 
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🔹 **Quality Gate Status:** $([[ $STATUS == "OK" ]] && echo '✅ Passed' || echo '🔴 Failed')"  >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Bugs:** $BUGS" >> $GITHUB_STEP_SUMMARY
+          echo "🔴 **Code Smells:** $CODE_SMELLS" >> $GITHUB_STEP_SUMMARY
+          echo "🟡 **Coverage:** $COVERAGE%" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            PR_ID=${{ github.event.pull_request.number }}
+            SONARQUBE_URL="https://sonarcloud.io/dashboard?id=$project_key&pullRequest=$PR_ID"
+            echo "🔗 **SonarQube PR Dashboard:** [View PR Analysis]($SONARQUBE_URL)" >> $GITHUB_STEP_SUMMARY
+          else
+            BRANCH_NAME=${{ github.ref_name }}
+            SONARQUBE_URL="https://sonarcloud.io/dashboard?id=$project_key&branch=$BRANCH_NAME"
+            echo "🔗 **SonarQube Branch Dashboard:** [View Branch Analysis]($SONARQUBE_URL)" >> $GITHUB_STEP_SUMMARY
+          fi       
 
       - name: Upload Build Artifacts (Optional)
         uses: actions/upload-artifact@v4  # ✅ Updated to v4
