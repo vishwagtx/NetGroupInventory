@@ -59,7 +59,7 @@ jobs:
 
       - name: Begin Sonar Analysis
         run: |
-          dotnet sonarscanner begin /k:$project_key /o:$organization  /d:sonar.token=$sonarqube_token /d:sonar.host.url="https://sonarcloud.io" /d:sonar.qualitygate.wait=true /d:sonar.buildString="${{ github.run_id }}
+          dotnet sonarscanner begin /k:$project_key /o:$organization  /d:sonar.token=$sonarqube_token /d:sonar.host.url="https://sonarcloud.io" /d:sonar.qualitygate.wait=true /d:sonar.buildString="${{github.run_id}}"
         continue-on-error: true
           
       - name: Build Project
