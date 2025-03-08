@@ -79,22 +79,22 @@ jobs:
         run: dotnet sonarscanner end /d:sonar.token=$sonarqube_token
         continue-on-error: true
         
-      - name: Publish SonarQube Summary
-        if: always()  # Ensures this step runs even if previous steps fail
+      # Get Quality Gate Status via SonarQube API
+      - name: Get and Publish Quality Gate Status
+        id: qualitygate
         run: |
-          echo "### SonarQube Analysis Summary 🚀" >> $GITHUB_STEP_SUMMARY
-          if [ -f sonar-report.json ]; then
-            STATUS=$(jq -r '.projectStatus.status' sonar-report.json)
-            BUGS=$(jq -r '.issues | length' sonar-report.json)
-            CODE_SMELLS=$(jq -r '.metrics[0].value' sonar-report.json)
-            COVERAGE=$(jq -r '.metrics[1].value' sonar-report.json)
-            
-            echo "🔹 **Quality Gate Status**: $STATUS" >> $GITHUB_STEP_SUMMARY
-            echo "✅ **Bugs**: $BUGS" >> $GITHUB_STEP_SUMMARY
-            echo "🔴 **Code Smells**: $CODE_SMELLS" >> $GITHUB_STEP_SUMMARY
-            echo "🟡 **Coverage**: $COVERAGE%" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "🚨 **SonarQube analysis failed!** No report found." >> $GITHUB_STEP_SUMMARY
+          # Call the SonarQube API to get the project quality gate status
+          response=$(curl -s -u "$sonarqube_token:" "https://sonarcloud.io/api/qualitygates/project_status?projectKey=$project_key")
+          echo "$response" > qualitygate.json
+          # Extract the status using jq (make sure jq is available, or install it if needed)
+          status=$(echo "$response" | jq -r '.projectStatus.status')
+          echo "Quality Gate Status: $status"
+          # Set the output for later steps
+          echo "::set-output name=status::$status"
+          # Optionally, fail the job if the quality gate is not OK
+          if [ "$status" != "OK" ]; then
+            echo "Quality Gate failed!"
+            exit 1
           fi
 
       - name: Upload Build Artifacts (Optional)
