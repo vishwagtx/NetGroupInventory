@@ -114,6 +114,14 @@ jobs:
           echo "✅ **Bugs:** $BUGS"
           echo "🔴 **Code Smells:** $CODE_SMELLS"
           echo "🟡 **Coverage:** $COVERAGE%"
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            PR_ID=${{ github.event.pull_request.number }}
+            SONARQUBE_URL="https://sonarcloud.io/dashboard?id=$project_key&pullRequest=$PR_ID"
+            echo "🔗 **SonarQube PR Dashboard:** [View PR Analysis]($SONARQUBE_URL)"
+          else
+            BRANCH_NAME=${{ github.ref_name }}
+            SONARQUBE_URL="https://sonarcloud.io/dashboard?id=$project_key&branch=$BRANCH_NAME"
+            echo "🔗 **SonarQube Branch Dashboard:** [View Branch Analysis]($SONARQUBE_URL)"
                 
 
       - name: Upload Build Artifacts (Optional)
