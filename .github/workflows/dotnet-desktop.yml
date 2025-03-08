@@ -59,7 +59,7 @@ jobs:
 
       - name: Begin Sonar Analysis
         run: |
-          dotnet sonarscanner begin /k:$project_key /o:$organization  /d:sonar.token=$sonarqube_token /d:sonar.host.url="https://sonarcloud.io" /d:sonar.qualitygate.wait=true  /d:sonar.report.export.path=sonar-report.json  # Export summary
+          dotnet sonarscanner begin /k:$project_key /o:$organization  /d:sonar.token=$sonarqube_token /d:sonar.host.url="https://sonarcloud.io" /d:sonar.qualitygate.wait=true /d:sonar.buildString="${{ github.run_id }}
         continue-on-error: true
           
       - name: Build Project
@@ -80,23 +80,20 @@ jobs:
         continue-on-error: true
         
       # Get Quality Gate Status via SonarQube API
-      - name: Get and Publish Quality Gate Status
-        id: qualitygate
+      - name: Get Analysis ID Using Build ID
+        id: get_analysis_id
         run: |
-          # Call the SonarQube API to get the project quality gate status
-          response=$(curl -s -u "$sonarqube_token:" "https://sonarcloud.io/api/qualitygates/project_status?projectKey=$project_key")
-          echo "$response"
-          echo "$response" > qualitygate.json
-          # Extract the status using jq (make sure jq is available, or install it if needed)
-          status=$(echo "$response" | jq -r '.projectStatus.status')
-          echo "Quality Gate Status: $status"
-          # Set the output for later steps
-          echo "::set-output name=status::$status"
-          # Optionally, fail the job if the quality gate is not OK
-          if [ "$status" != "OK" ]; then
-            echo "Quality Gate failed!"
+          echo "Querying CE Activity for project ${{ secrets.PROJECT_KEY }}..."
+          ce_response=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" "https://sonarcloud.io/api/ce/activity?component=$project_key")
+          echo "$ce_response" > ce_activity.json
+          # Filter tasks for one matching our build id (assumes the field 'buildString' is recorded)
+          analysisId=$(echo "$ce_response" | jq -r '.current.tasks[] | select(.buildString=="'"${GITHUB_RUN_ID}"'") | .analysisId')
+          if [ -z "$analysisId" ]; then
+            echo "No analysis found with build id ${GITHUB_RUN_ID}."
             exit 1
           fi
+          echo "Found Analysis ID: $analysisId"
+          echo "::set-output name=analysisId::$analysisId"
 
       - name: Upload Build Artifacts (Optional)
         uses: actions/upload-artifact@v4  # ✅ Updated to v4
