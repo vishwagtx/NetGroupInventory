@@ -80,8 +80,7 @@ jobs:
         continue-on-error: true
         
       - name: SonarQube Quality Gate Status
-        run: |
-          echo "### SonarQube Analysis Summary 🚀" >> $GITHUB_STEP_SUMMARY
+        run: |          
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             # Fetch PR-specific SonarQube analysis
             PR_ID=${{ github.event.pull_request.number }}
@@ -109,7 +108,8 @@ jobs:
           COVERAGE=${COVERAGE:-0}
       
           # Format the output
-          echo ""
+          echo "### SonarQube Analysis Summary 🚀" >> $GITHUB_STEP_SUMMARY
+          echo ""> 
           echo "🔹 **Quality Gate Status:** $([[ $STATUS == "OK" ]] && echo '✅ Passed' || echo '🔴 Failed')"
           echo "✅ **Bugs:** $BUGS"
           echo "🔴 **Code Smells:** $CODE_SMELLS"
