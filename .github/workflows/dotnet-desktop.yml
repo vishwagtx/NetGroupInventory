@@ -51,8 +51,11 @@ jobs:
       - name: Restore Dependencies
         run: dotnet restore NetGroupInventory.sln
 
-      - name: Install Sonar Scanner
-        run: dotnet tool install --global dotnet-sonarscanner  
+      # Install SonarScanner for .NET
+      - name: Install SonarScanner for .NET
+        run: |
+          dotnet tool install --global dotnet-sonarscanner
+          export PATH="$PATH:/root/.dotnet/tools"  
 
       - name: Begin Sonar Analysis
         run: |
