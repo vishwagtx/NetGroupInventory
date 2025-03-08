@@ -79,12 +79,22 @@ jobs:
         run: dotnet sonarscanner end /d:sonar.token=$sonarqube_token
         continue-on-error: true
         
-      - name: Publish Test Results
-        uses: dorny/test-reporter@v1
-        with:
-          name: SonarQube
-          path: '**/coverage.opencover.xml' # Path to test results
-          reporter: dotnet-trx
+      - name: Get SonarQube Status
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            # For PR: Fetch the PR status from SonarQube
+            PR_ID=${{ github.event.pull_request.number }}
+            echo "Fetching SonarQube PR status for PR #$PR_ID..."
+            curl -u $sonarqube_token: \
+              "https://sonarcloud.io/api/qualitygates/project_status?projectKey=$project_key&pullRequest=$PR_ID" | \
+              jq '.projectStatus.status'
+          else
+            # For push to branch: Fetch the branch status from SonarQube
+            echo "Fetching SonarQube branch status..."
+            curl -u $sonarqube_token: \
+              "https://sonarcloud.io/api/qualitygates/project_status?projectKey=$project_key" | \
+              jq '.projectStatus.status'
+          fi
           
 
       - name: Upload Build Artifacts (Optional)
