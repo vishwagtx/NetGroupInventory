@@ -108,12 +108,12 @@ jobs:
           COVERAGE=${COVERAGE:-0}
       
           # Format the output
-          echo "### SonarQube Analysis Summary 🚀" >> $GITHUB_STEP_SUMMARY
-          echo ""> 
+          echo "### SonarQube Analysis Summary 🚀" >> $GITHUB_STEP_SUMMARY 
           echo "🔹 **Quality Gate Status:** $([[ $STATUS == "OK" ]] && echo '✅ Passed' || echo '🔴 Failed')"
           echo "✅ **Bugs:** $BUGS"
           echo "🔴 **Code Smells:** $CODE_SMELLS"
           echo "🟡 **Coverage:** $COVERAGE%"
+          
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             PR_ID=${{ github.event.pull_request.number }}
             SONARQUBE_URL="https://sonarcloud.io/dashboard?id=$project_key&pullRequest=$PR_ID"
