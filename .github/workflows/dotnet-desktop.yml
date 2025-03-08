@@ -74,7 +74,8 @@ jobs:
           
       - name: End Sonar Analysis
         run: dotnet sonarscanner end /d:sonar.token=$sonarqube_token
-
+        continue-on-error: true
+        
       - name: Publish SonarQube Summary
         if: always()
         run: |
