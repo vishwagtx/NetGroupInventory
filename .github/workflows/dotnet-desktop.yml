@@ -11,10 +11,29 @@ on:
       - main
       - develop
       - master
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Choose an environment'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+      deploy_version:
+        description: 'Deployment Version'
+        required: false
+        default: 'latest'
+        type: string
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      sonarqube_token: 7d3dd14084991553da3295bddca50b258530e524
+      project_key: bitmatrix_core
+      organization: bitmatrix
 
     strategy:
       matrix:
@@ -38,6 +57,13 @@ jobs:
       - name: Run unit tests
         run: dotnet test --configuration Release --no-build --logger "trx;LogFileName=test-results.trx"
 
+      - name: Install Sonar Scanner
+        run: dotnet tool install --global dotnet-sonarscanner  
+
+      - name: Begin Sonar Analysis
+        run: |
+          dotnet sonarscanner begin /k:$project_key /o:$organization /d:sonar.token="$sonarqube_token" /d:sonar.host.url="https://sonarcloud.io"
+      
       - name: Publish Test Results
         uses: dorny/test-reporter@v1
         with:
