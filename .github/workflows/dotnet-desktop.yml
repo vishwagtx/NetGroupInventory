@@ -79,8 +79,9 @@ jobs:
         run: dotnet sonarscanner end /d:sonar.token=$sonarqube_token
         continue-on-error: true
         
-      - name: Get SonarQube Quality Gate Status
+      - name: SonarQube Quality Gate Status
         run: |
+          echo "### SonarQube Analysis Summary 🚀" >> $GITHUB_STEP_SUMMARY
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             # Fetch PR-specific SonarQube analysis
             PR_ID=${{ github.event.pull_request.number }}
